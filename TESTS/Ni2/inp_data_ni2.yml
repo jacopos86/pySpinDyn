@@ -1,0 +1,31 @@
+coordinate_file : ./Ni2/ni2.xyz
+optimized_coordinate_file : ./Ni2/ni2_optimized.xyz
+
+periodic_dimension : 0
+phonons : True
+nkpts :
+  - 0
+  - 0
+  - 0
+llist :
+  Ni :
+    - 0
+    - 1
+    - 2
+lattice_parameter_ang : 10.0
+unit_cell : None
+active_space : 24
+active_els : 20
+
+psi4_parameters :
+  basis_set :
+    Ni :
+      LANL2DZ
+  basis_file_name : ni_basis.gbs
+  scf_type : pk
+  reference : uhf
+  e_convergence : 1.e-7
+  d_convergence : 1.e-6
+  maxiter : 1000
+  multiplicity : 3
+  charge : 0

@@ -1,0 +1,32 @@
+coordinate_file : ./Fe1/fe.xyz
+optimized_coordinate_file : ./Fe1/fe_optimized.xyz
+
+periodic_dimension : 0
+phonons : True
+nkpts :
+  - 3
+  - 3
+  - 3
+llist :
+  Fe :
+    - 0
+    - 1
+    - 2
+lattice_parameter_ang : 10.0
+unit_cell : None
+n_core_elec :
+  Fe : 18
+n_val_elec :
+  Fe : 8
+n_unocc_states : 3
+
+psi4_parameters :
+  basis_set : LANL2DZ
+  basis_file_name : fe_basis.gbs
+  scf_type : pk
+  reference : rohf
+  e_convergence : 1.e-7
+  d_convergence : 1.e-6
+  maxiter : 1000
+  multiplicity : 5
+  charge : 0

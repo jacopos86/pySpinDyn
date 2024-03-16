@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: pyspinorbitevol
+Version: 1.0.0
+Summary: The pyspinorbitevol package is a time-dependent-tight-binding evolution code that takes in input data from DFT calculation to setup a full spin-electrons-phonons time-dependent evolution
+Home-page: 
+Author: Jacopo Simoni
+Author-email: jsimoni@lbl.gov
+License: gpl-3.0
+Keywords: spin orbit,time dependent tight binding,electron-phonon coupling,spin-phonon coupling
+License-File: LICENSE.txt

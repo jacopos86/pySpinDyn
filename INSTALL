@@ -1,0 +1,18 @@
+# create local env.
+conda create -n pyspinorb python=3.8 "numpy>=1.22.3,<1.23.0" scipy matplotlib
+# activate new env
+conda activate pyspinorb
+# install pymatgen
+pip install pymatgen==2022.11.7
+# install psi4
+conda install psi4 python=3.8 -c psi4
+# install openbabel
+conda install -c "conda-forge/label/cf202003" openbabel
+# install phonopy
+conda install -c conda-forge phonopy
+# install pyscf
+pip install --prefer-binary pyscf
+# install ase
+pip install ase
+# colorlog installation
+pip install colorlog
