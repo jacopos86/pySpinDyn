@@ -2,20 +2,21 @@ from pyspinorbitevol.logging_module import log
 import yaml
 import numpy as np
 #
-class input_data_class():
+class input_data_class(ABC):
     # initialization
     def __init__(self):
-        # psi4 data
-        self.scf_psi4 = 'direct'
-        self.psi4_reference = 'uks'
-        self.psi4_e_converg = 1.e-7
-        self.psi4_d_converg = 1.e-6
-        self.psi4_maxiter = 1000
-        self.orbital_initialization = "SAD"
-        self.sph_basis = None
-        self.primitive_vectors = [None]*3
+        # working directory
+        self.working_dir = ''
+        # energy convergence treshold
+        self.e_converg = 1.e-7
+        # phonons -> atom dynamics
+        self.phonons = True
+        # active space -> size
+        self.active_space = 0
+        # n. active electrons in calc.
+        self.active_electrons = 0
     # read input data
-    def read_data(self, input_file):
+    def read_shared_data(self, data):
         try :
             f = open(input_file)
         except :
@@ -46,6 +47,15 @@ class input_data_class():
             if 'charge' in data['psi4_parameters']:
                 self.charge = data['psi4_parameters']['charge']
         # other input parameters
+        # working directory
+        if 'working_directory' in data:
+            self.working_dir = data['working_directory']
+        #  active space -> dimension
+        if 'active_space' in data:
+            self.active_space = data['active_space']
+        # n. active electrons
+        if 'active_electrons' in data:
+            self.active_electrons = data['active_electrons']
         if 'coordinate_file' in data:
             self.coordinate_file = data['coordinate_file']
         if 'optimized_coordinate_file' in data:
@@ -75,11 +85,50 @@ class input_data_class():
                 self.primitive_vectors[2] = self.latt_ang*np.array([0.,0.,1.])
             else:
                 raise Exception("unit cell not recognised")
-        if 'active_space' in data:
-            self.nact = data['active_space']
-        if 'active_els' in data:
-            self.act_els = data['active_els']
 #
+#  PSI4 parameters class
+class psi4_input_data_class(input_data_class):
+    def __init__(self):
+        super().__init__()
+        #
+        # psi4 data
+        self.scf_psi4 = 'direct'
+        # reference calculation
+        self.psi4_reference = 'uks'
+        # max. iterations
+        self.psi4_maxiter = 1000
+        # orbital init.
+        self.orbital_initialization = "SAD"
+        # sph. basis set
+        self.sph_basis = None
+        # d convergence
+        self.psi4_d_converg = 1.e-6
+    def read_data(self, data):
+        # psi4 section
+        if not p.sph_basis:
+            # atomic basis set
+            if 'basis_set' in data:
+                self.psi4_basis = data['basis_set']
+            # type scf calculation
+            if 'scf_type' in data:
+                self.scf_psi4 = data['scf_type']
+            if 'reference' in data['psi4_parameters']:
+                self.psi4_reference = data['psi4_parameters']['reference']
+            if 'e_convergence' in data['psi4_parameters']:
+                self.psi4_e_converg = data['psi4_parameters']['e_convergence']
+            if 'd_convergence' in data['psi4_parameters']:
+                self.psi4_d_converg = data['psi4_parameters']['d_convergence']
+            if 'psi4_orbital_initialization' in data['psi4_parameters']:
+                self.orbital_initialization = data['psi4_parameters']['psi4_orbital_initialization']
+            if 'maxiter' in data['psi4_parameters']:
+                self.psi4_maxiter = data['psi4_parameters']['maxiter']
+            if 'basis_file_name' in data['psi4_parameters']:
+                self.basis_file_name = data['psi4_parameters']['basis_file_name']
+            if 'multiplicity' in data['psi4_parameters']:
+                self.multiplicity = data['psi4_parameters']['multiplicity']
+            if 'charge' in data['psi4_parameters']:
+                self.charge = data['psi4_parameters']['charge']
+
 p = input_data_class()
 p.sep = "*"*94
 # read config.yml
