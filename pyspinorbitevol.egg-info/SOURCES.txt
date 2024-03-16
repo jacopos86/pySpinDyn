@@ -36,3 +36,4 @@ pyspinorbitevol.egg-info/PKG-INFO
 pyspinorbitevol.egg-info/SOURCES.txt
 pyspinorbitevol.egg-info/dependency_links.txt
 pyspinorbitevol.egg-info/top_level.txt
+tests/test.py

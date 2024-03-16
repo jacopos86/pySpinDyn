@@ -17,13 +17,6 @@ class input_data_class(ABC):
         self.active_electrons = 0
     # read input data
     def read_shared_data(self, data):
-        try :
-            f = open(input_file)
-        except :
-            msg = "could not find: " + input_file
-            log.error(msg)
-        data = yaml.load(f, Loader=yaml.Loader)
-        f.close()
         # other input parameters
         # working directory
         if 'working_directory' in data:
@@ -34,6 +27,12 @@ class input_data_class(ABC):
         # n. active electrons
         if 'active_electrons' in data:
             self.active_electrons = data['active_electrons']
+        # system's charge
+        if 'charge' in data:
+            self.charge = data['charge']
+        # phonons
+        if 'phonons' in data:
+            self.ph = data['phonons']
         if 'coordinate_file' in data:
             self.coordinate_file = data['coordinate_file']
         if 'optimized_coordinate_file' in data:
@@ -42,10 +41,6 @@ class input_data_class(ABC):
             self.D = data['periodic_dimension']
         if 'nkpts' in data:
             self.nkpts = data['nkpts']
-        if p.sph_basis and 'llist' in data:
-            self.llist = data['llist']
-        if 'phonons' in data:
-            self.ph = data['phonons']
         if 'lattice_parameter_ang' in data:
             self.latt_ang = data['lattice_parameter_ang']
         if 'unit_cell' in data:
@@ -78,11 +73,24 @@ class psi4_input_data_class(input_data_class):
         # orbital init.
         self.orbital_initialization = "SAD"
         # sph. basis set
-        self.sph_basis = None
+        self.sph_basis = False
         # d convergence
         self.psi4_d_converg = 1.e-6
-    def read_data(self, data):
+        # basis set file
+        self.basis_file_name = ''
+        # multiplicity
+        self.multiplicity = 1
+    def read_data(self, input_file):
+        try :
+            f = open(input_file)
+        except :
+            msg = "could not find: " + input_file
+            log.error(msg)
+        data = yaml.load(f, Loader=yaml.Loader)
+        f.close()
         # psi4 section
+        if p.sph_basis and 'llist' in data:
+            self.llist = data['llist']
         if not p.sph_basis:
             # atomic basis set
             if 'basis_set' in data:
@@ -90,25 +98,42 @@ class psi4_input_data_class(input_data_class):
             # type scf calculation
             if 'scf_type' in data:
                 self.scf_psi4 = data['scf_type']
-            if 'reference' in data['psi4_parameters']:
-                self.psi4_reference = data['psi4_parameters']['reference']
-            if 'e_convergence' in data['psi4_parameters']:
-                self.psi4_e_converg = data['psi4_parameters']['e_convergence']
-            if 'd_convergence' in data['psi4_parameters']:
-                self.psi4_d_converg = data['psi4_parameters']['d_convergence']
-            if 'psi4_orbital_initialization' in data['psi4_parameters']:
-                self.orbital_initialization = data['psi4_parameters']['psi4_orbital_initialization']
-            if 'maxiter' in data['psi4_parameters']:
-                self.psi4_maxiter = data['psi4_parameters']['maxiter']
-            if 'basis_file_name' in data['psi4_parameters']:
-                self.basis_file_name = data['psi4_parameters']['basis_file_name']
-            if 'multiplicity' in data['psi4_parameters']:
-                self.multiplicity = data['psi4_parameters']['multiplicity']
-            if 'charge' in data['psi4_parameters']:
-                self.charge = data['psi4_parameters']['charge']
+            # reference calc.
+            if 'reference' in data:
+                self.psi4_reference = data['reference']
+            # d convergence
+            if 'd_convergence' in data:
+                self.psi4_d_converg = data['d_convergence']
+            # orbital initialization
+            if 'orbital_initialization' in data:
+                self.orbital_initialization = data['orbital_initialization']
+            # max. iterations
+            if 'maxiter' in data:
+                self.psi4_maxiter = data['maxiter']
+            # basis file name
+            if 'basis_file_name' in data:
+                self.basis_file_name = data['basis_file_name']
+            # multiplicity
+            if 'multiplicity' in data:
+                self.multiplicity = data['multiplicity']
 
-p = input_data_class()
+#
+# QE input class
+class QE_input_data_class(input_data_class):
+    def __init__(self):
+        super().__init__()
+
+# input parameters object
+arguments = parser.parse_args()
+code = arguments.calc_typ
+if code == "PSI4":
+    p = psi4_input_data_class()
+elif code == "QE":
+    p = None
+else:
+    p = None
 p.sep = "*"*94
+
 # read config.yml
 try:
     f = open("./config.yml")
