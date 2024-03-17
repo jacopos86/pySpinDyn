@@ -1,20 +1,10 @@
 working_directory : /home/jacopo/Documents/orbital-evol-model-code/TESTS/QE-FeNi/
-coordinate_file : feni.xyz
-optimized_coordinate_file : feni_optimized.xyz
 
 phonons : True
-nkpts :
-  - 1
-  - 1
-  - 1
-lattice_parameter_ang : 10.0
+nkpts : 1
+lattice_parameter_ang : 2.866
 unit_cell : None
 active_space : 18
 active_els : 18
-
-QE_parameters :
-  reference : uhf
-  e_convergence : 1.e-8
-  d_convergence : 1.e-8
-  maxiter : 1000
-  charge : 0
+charge : 0
+periodic_dimension : 0

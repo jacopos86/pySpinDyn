@@ -144,6 +144,15 @@ class QE_input_data_class(input_data_class):
         self.read_shared_data(data)
         #
         # read data
+        # PWSCF part
+        if 'prefix' in data:
+            self.prefix = data['prefix']
+        # super cell size
+        if 'supercell_size' in data:
+            self.supercell_size = data['supercell_size']
+        # atoms in unit cell
+        if 'unitcell_atoms' in data:
+            self.atoms_coords = np.array(data['unitcell_atoms'])
         if 'nkpts' in data:
             self.nkpt = data['nkpt']
             if self.D == 0:
