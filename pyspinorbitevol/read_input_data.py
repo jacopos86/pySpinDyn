@@ -1,6 +1,8 @@
 from pyspinorbitevol.logging_module import log
+from pyspinorbitevol.parser import parser
 import yaml
 import numpy as np
+from abc import ABC
 #
 class input_data_class(ABC):
     # initialization
@@ -15,6 +17,8 @@ class input_data_class(ABC):
         self.active_space = 0
         # n. active electrons in calc.
         self.active_electrons = 0
+        # periodic dimension
+        self.D = 0
     # read input data
     def read_shared_data(self, data):
         # other input parameters
@@ -33,26 +37,6 @@ class input_data_class(ABC):
         # phonons
         if 'phonons' in data:
             self.ph = data['phonons']
-        # periodic dimension
-        if 'periodic_dimension' in data:
-            self.D = data['periodic_dimension']
-        if 'lattice_parameter_ang' in data:
-            self.latt_ang = data['lattice_parameter_ang']
-        if 'unit_cell' in data:
-            if data['unit_cell'] == "FCC":
-                self.primitive_vectors[0] = 0.5*self.latt_ang*np.array([1., 1., 0.])
-                self.primitive_vectors[1] = 0.5*self.latt_ang*np.array([0., 1., 1.])
-                self.primitive_vectors[2] = 0.5*self.latt_ang*np.array([1., 0., 1.])
-            elif data['unit_cell'] == "None":
-                self.primitive_vectors[0] = self.latt_ang*np.array([1., 0., 0.])
-                self.primitive_vectors[1] = self.latt_ang*np.array([0., 1., 0.])
-                self.primitive_vectors[2] = self.latt_ang*np.array([0., 0., 1.])
-            elif data['unit_cell'] == "SC":
-                self.primitive_vectors[0] = self.latt_ang*np.array([1.,0.,0.])
-                self.primitive_vectors[1] = self.latt_ang*np.array([0.,1.,0.])
-                self.primitive_vectors[2] = self.latt_ang*np.array([0.,0.,1.])
-            else:
-                raise Exception("unit cell not recognised")
 #
 #  PSI4 parameters class
 class psi4_input_data_class(input_data_class):
@@ -132,6 +116,22 @@ class QE_input_data_class(input_data_class):
         # D = 3 -> [nkpt,nkpt,nkpt]
         self.nkpt = 0
         self.kgr  = []
+        # cell size
+        self.supercell_size = []
+        # lattice vectors
+        self.lattice_vect = []
+        self.lattice_ang = None
+        self.atoms_coords = []
+        # prefix
+        self.prefix = ''
+        # non collinearity
+        self.noncollinear = True
+        # pseudo
+        self.pseudo_dir = ''
+        self.pseudo = []
+        # cut-off
+        self.ecutwfc = 60.0
+        
     def read_data(self, input_file):
         try :
             f = open(input_file)
@@ -150,11 +150,34 @@ class QE_input_data_class(input_data_class):
         # super cell size
         if 'supercell_size' in data:
             self.supercell_size = data['supercell_size']
+        # periodic dimension
+        if 'periodic_dimension' in data:
+            self.D = data['periodic_dimension']
         # atoms in unit cell
         if 'unitcell_atoms' in data:
             self.atoms_coords = np.array(data['unitcell_atoms'])
+        # lattice vectors
+        if 'primitive_vectors' in data:
+            self.lattice_vect = np.array(data['primitive_vectors'])
+        if 'lattice_parameter_ang' in data:
+            self.lattice_ang = data['lattice_parameter_ang']
+        # atom symbols
+        if 'atom_symbols' in data:
+            self.atoms_symb = data['atom_symbols']
+        # pseudo potentials info
+        if 'pseudo_dir' in data:
+            self.pseudo_dir = data['pseudo_dir']
+        if 'pseudo' in data:
+            self.pseudo = data['pseudo']
+        # cut-off energy
+        if 'ecutwfc' in data:
+            self.ecutwfc = data['ecutwfc']
+        # non collinearity
+        if 'noncollinear' in data:
+            self.noncollinear = data['noncollinear']
+        # k points
         if 'nkpts' in data:
-            self.nkpt = data['nkpt']
+            self.nkpt = data['nkpts']
             if self.D == 0:
                 self.kgr = [1, 1, 1]
             elif self.D == 1:
@@ -172,7 +195,7 @@ code = arguments.calc_typ
 if code == "PSI4":
     p = psi4_input_data_class()
 elif code == "QE":
-    p = None
+    p = QE_input_data_class()
 else:
     p = None
 p.sep = "*"*94

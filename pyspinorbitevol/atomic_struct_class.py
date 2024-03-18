@@ -2,7 +2,6 @@ from pyspinorbitevol.psi4_molecule_class import psi4_molecule_class
 from pyspinorbitevol.read_input_data import p
 from pyspinorbitevol.atomic_sites_class import AtomicSiteList
 from pyspinorbitevol.basis_set_module import sph_harm_basis_class, psi4_basis_class
-from pyspinorbitevol.unit_cell_class import uc
 import os
 
 # atomic structure

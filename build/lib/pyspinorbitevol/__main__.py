@@ -3,13 +3,13 @@ from pyspinorbitevol.logging_module import log
 from pyspinorbitevol.psi4_driver import psi4_main_driver, psi4_geometry_driver
 from pyspinorbitevol.sphbasis_driver import sphbasis_driver
 from pyspinorbitevol.basis_set_module import prepare_basis_set
-from pyspinorbitevol.unit_cell_class import uc
 from pyspinorbitevol.kpoints_class import kg
 from pyspinorbitevol.set_atomic_struct import System
 from pyspinorbitevol.parser import parser
 # read input config data
 arguments = parser.parse_args()
 p.read_data(arguments.input_file)
+print(p.supercell_size)
 code = arguments.calc_typ
 #
 # branch (1) -> PSI4
@@ -45,4 +45,9 @@ elif code == "QE":
     log.info("\t START QE CALCULATION")
     log.info("\n")
     log.info("\t " + p.sep)
-    # first build cell structure
+    # compute 1) cell
+    # 2) atomic structure
+    # 3) k grid
+    System.main_driver()
+    # 
+    

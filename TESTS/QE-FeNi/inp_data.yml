@@ -8,3 +8,7 @@ active_space : 18
 active_els : 18
 charge : 0
 periodic_dimension : 0
+supercell_size :
+  - 2
+  - 2
+  - 2

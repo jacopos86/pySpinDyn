@@ -33,7 +33,7 @@ class UnitCell_class(ABC):
 		# Ang^3
 	def set_primitive_vectors(self):
 		# primitive vectors -> ang
-		self.primitive_vect = np.array(p.lattice_vect)*p.latticep_ang
+		self.primitive_vect = np.array(p.lattice_vect)*p.lattice_ang
 		self.lattice = Lattice(self.primitive_vect)
 	def set_rec_lattice(self):
 		self.rec_lattice = self.lattice.reciprocal_lattice
@@ -108,14 +108,3 @@ class QE_UnitCell_class(UnitCell_class):
                     scaled_positions=coords, symbols=species)
 		phonon = Phonopy(unitcell=unit_cell, supercell_matrix=p.supercell_size)
 		self.super_cell = phonon.get_supercell()
-
-# 
-#  set uc object
-arguments = parser.parse_args()
-code = arguments.calc_typ
-if code == "PSI4":
-	uc = psi4_UnitCell_class()
-elif code == "QE":
-    uc = QE_UnitCell_class()
-else:
-    uc = None
