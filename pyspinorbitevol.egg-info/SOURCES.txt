@@ -6,6 +6,7 @@ pyspinorbitevol/__main__.py
 pyspinorbitevol/atomic_sites_class.py
 pyspinorbitevol/atomic_struct_class.py
 pyspinorbitevol/basis_set_module.py
+pyspinorbitevol/cell_class.py
 pyspinorbitevol/crystal_field_class.py
 pyspinorbitevol/crystal_field_gradient_class.py
 pyspinorbitevol/density_matrix_module.py
@@ -30,7 +31,6 @@ pyspinorbitevol/sphbasis_driver.py
 pyspinorbitevol/spin_mtxel_functions.py
 pyspinorbitevol/spin_operators_class.py
 pyspinorbitevol/two_particle_inter_class.py
-pyspinorbitevol/unit_cell_class.py
 pyspinorbitevol/utility_functions.py
 pyspinorbitevol.egg-info/PKG-INFO
 pyspinorbitevol.egg-info/SOURCES.txt

@@ -9,7 +9,6 @@ from pyspinorbitevol.parser import parser
 # read input config data
 arguments = parser.parse_args()
 p.read_data(arguments.input_file)
-print(p.supercell_size)
 code = arguments.calc_typ
 #
 # branch (1) -> PSI4
@@ -48,6 +47,4 @@ elif code == "QE":
     # compute 1) cell
     # 2) atomic structure
     # 3) k grid
-    System.main_driver()
-    # 
-    
+    System.setup_atomic_structure()

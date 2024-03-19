@@ -47,6 +47,4 @@ elif code == "QE":
     # compute 1) cell
     # 2) atomic structure
     # 3) k grid
-    System.main_driver()
-    # 
-    
+    System.setup_atomic_structure()

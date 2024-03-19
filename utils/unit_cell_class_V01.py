@@ -195,3 +195,101 @@ elif code == "QE":
     uc = QE_UnitCell_class()
 else:
     uc = None
+    
+    class psi4_UnitCell_class(UnitCell_class):
+	def __init__(self):
+		super().__init__()
+		# primitive vectors must be in angstrom
+		self.NNlist = None
+	def build_pymatgen_structure(self, atomic_structure):
+		# set up the full atomic structure
+		Atomslist = atomic_structure.sites_list.Atomslist
+		species = []
+		for Site in Atomslist:
+			elem = Site.element
+			species.append(elem)
+		coords = []
+		for Site in Atomslist:
+			R = Site.R0
+			coords.append(R)
+		# set up the structure
+		self.pymatgen_struct = Structure(lattice=self.lattice, species=species, coords=coords,
+			charge=p.charge, validate_proximity=True, coords_are_cartesian=True)
+	def set_nn_atoms(self, atomic_structure):
+		self.build_pymatgen_structure(atomic_structure)
+		Atomslist = atomic_structure.sites_list.Atomslist
+		self.NNlist = []
+		#
+		# periodic dimension 0
+		assert p.D == 0
+		# suppress warnings
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			NNstruct = CrystalNN()
+			for i in range(len(Atomslist)):
+				nndata = NNstruct.get_nn_info(self.cell_struct, i)
+				# store ONLY first nn in list (weight = 1)
+				# check if the atom is in the structure
+				nndata2 = []
+				for data in nndata:
+					R0 = Atomslist[data['site'].index].R0
+					d = data['site'].coords - R0
+					if norm_realv(d) < eps:
+						#print(i, data['site'].coords, data['site'].index)
+						nndata2.append(data)
+				# store ONLY first nn in list (weight = 1)
+				self.NNlist.append(nndata2)
+    
+    
+class AperiodicAtomsStructClass(AtomsStructureClass):
+    def __init__(self):
+        super(AperiodicAtomsStructClass, self).__init__()
+
+class PeriodicAtomsStructClass(AtomsStructureClass):
+    def __init__(self):
+        super(PeriodicAtomsStructClass, self).__init__()
+        self.sc_struct = None
+    def set_supercell_struct(self):
+        # generate temporary xyz file
+        Atomslist0 = self.sites_list.Atomslist
+        extended_atoms_list = []
+        for site in range(len(Atomslist0)):
+            atom0 = Atomslist0[site]
+            atom_dict = {'symbol': atom0.element, 'coordinate': atom0.R0}
+            insert_dict = True
+            for atom_1 in extended_atoms_list:
+                if (atom_1['coordinate'] == atom_dict['coordinate']).all():
+                    insert_dict = False
+                    break
+            if insert_dict:
+                extended_atoms_list.append(atom_dict)
+            nndata = uc.NNlist[site]
+            for atom in nndata:
+                atom_dict = {'symbol': Atomslist0[atom['site'].index].element, 'coordinate': atom['site'].coords}
+                insert_dict = True
+                for atom_1 in extended_atoms_list:
+                    if (atom_1['coordinate'] == atom_dict['coordinate']).all():
+                        insert_dict = False
+                        break
+                if insert_dict:
+                    extended_atoms_list.append(atom_dict)
+        # write temp xyz file
+        lines = []
+        line = str(len(extended_atoms_list)) + "\n"
+        lines.append(line)
+        line = "Angstrom\n"
+        lines.append(line)
+        for atom_1 in extended_atoms_list:
+            line = ""
+            line = atom_1['symbol'] 
+            line += " " + str(atom_1['coordinate'][0]) 
+            line += " " + str(atom_1['coordinate'][1]) 
+            line += " " + str(atom_1['coordinate'][2]) 
+            line += "\n"
+            lines.append(line)
+        with open("./tmp_struct.xyz", 'w') as fp:
+            for line in lines:
+                fp.write(line)
+        self.sc_struct = psi4_molecule_class("./tmp_struct.xyz")
+        self.sc_struct.set_num_electrons()
+        self.sc_struct.print_num_elec()

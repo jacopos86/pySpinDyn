@@ -34,7 +34,7 @@ class AtomicSite:
 #
 #   AtomicSiteList class
 #
-class AtomicSiteList:
+class psi4_AtomicSiteList:
 	def __init__(self):
 		self.Atomslist = []
 		self.Rcm = np.zeros(3)
