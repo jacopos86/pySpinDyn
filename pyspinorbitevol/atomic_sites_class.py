@@ -112,12 +112,14 @@ class QE_AtomicSiteList(AtomicSiteList):
 	def __init__(self):
 		super().__init__()
 	# set number of atoms
-	def set_natoms(self, cell):
-		cell.set_number_of_atoms()
-		self.natoms = cell.get_number_of_atoms()
-		cell.print_number_of_atoms()
-	def initialize_atoms_list(self, cell):
-		self.set_natoms(cell)
+	def set_natoms(self, cell_struct):
+		cell_struct.set_number_of_atoms()
+		self.natoms = cell_struct.get_number_of_atoms()
+		cell_struct.print_number_of_atoms()
+	def initialize_atoms_list(self, cell_struct):
+		self.set_natoms(cell_struct)
+		# symbols
+		symb_lst = cell_struct.get_chemical_symbols()
 		# make atoms list
 		for ia in range(self.natoms):
-			pass
+			Element = symb_lst[ia]

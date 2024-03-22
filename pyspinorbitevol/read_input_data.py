@@ -188,7 +188,19 @@ class QE_input_data_class(input_data_class):
                 self.kgr = [self.nkpt, self.nkpt, self.nkpt]
             else:
                 log.error("Wrong periodic D : " + str(self.D))
-            
+
+    def read_Zv_from_pseudo_file(self, pseudo_file):
+        f = open(pseudo_file, 'r')
+        lines = f.readlines()
+        zv = 0.
+        for line in lines:
+            line = line.strip().split()
+            if len(line) == 3:
+                if line[1] == "Z" and line[2] == "valence":
+                    zv = float(line[0])
+                    break
+        return zv
+    
 # input parameters object
 arguments = parser.parse_args()
 code = arguments.calc_typ

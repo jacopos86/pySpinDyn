@@ -1,6 +1,7 @@
 import numpy as np
 from pyspinorbitevol.logging_module import log
 from pyspinorbitevol.phys_constants import bohr_to_ang, mp
+from abc import ABC
 #
 #   This module implements
 #   the atomic site class
@@ -34,13 +35,45 @@ class AtomicSite:
 #
 #   AtomicSiteList class
 #
-class psi4_AtomicSiteList:
+class AtomicSiteList(ABC):
 	def __init__(self):
 		self.Atomslist = []
 		self.Rcm = np.zeros(3)
 		self.Vcm = np.zeros(3)
 		self.M = 0.
 		self.latt_orbital_mom = np.zeros(3)
+	def add_site_to_list(self, Element, Mass, Z, R, V):
+		# set atomic site
+		site = AtomicSite(Element, Mass, Z, R, V)
+		site.set_orbital_momentum()
+		# append site to list
+		self.Atomslist.append(site)
+	def set_total_mass(self):
+		self.M = 0
+		for site in self.Atomslist:
+			self.M = self.M + site.mass
+	def set_center_of_mass_position(self):
+		Rcm = np.zeros(3)
+		for site in self.Atomslist:
+			Rcm[:] += site.mass * site.R0[:]
+		Rcm[:] = Rcm[:] / self.M
+		self.Rcm = Rcm
+	def set_center_of_mass_velocity(self):
+		vcm = np.zeros(3)
+		for site in self.Atomslist:
+			vcm[:] = vcm[:] + site.mass * site.V0[:]
+		vcm[:] = vcm[:] / self.M
+		self.Vcm = vcm
+	def set_lattice_orbital_momentum(self):
+		self.latt_orbital_mom[:] = 0.
+		for site in self.Atomslist:
+			self.latt_orbital_mom = self.latt_orbital_mom + site.L0
+
+#
+# Psi4 subclass
+class psi4_AtomicSiteList(AtomicSiteList):
+	def __init__(self):
+		super().__init__()
 	# set number of atoms
 	def set_natoms(self, molecule):
 		self.natoms = molecule.geometry.natom()
@@ -72,29 +105,21 @@ class psi4_AtomicSiteList:
 			self.Atomslist[ia].set_relative_velocity(self.Vcm)
 	def print_geometry(self, molecule):
 		molecule.geometry.print_out_in_angstrom()
-	def add_site_to_list(self, Element, Mass, Z, R, V):
-		# set atomic site
-		site = AtomicSite(Element, Mass, Z, R, V)
-		site.set_orbital_momentum()
-		# append site to list
-		self.Atomslist.append(site)
-	def set_total_mass(self):
-		self.M = 0
-		for site in self.Atomslist:
-			self.M = self.M + site.mass
-	def set_center_of_mass_position(self):
-		Rcm = np.zeros(3)
-		for site in self.Atomslist:
-			Rcm[:] += site.mass * site.R0[:]
-		Rcm[:] = Rcm[:] / self.M
-		self.Rcm = Rcm
-	def set_center_of_mass_velocity(self):
-		vcm = np.zeros(3)
-		for site in self.Atomslist:
-			vcm[:] = vcm[:] + site.mass * site.V0[:]
-		vcm[:] = vcm[:] / self.M
-		self.Vcm = vcm
-	def set_lattice_orbital_momentum(self):
-		self.latt_orbital_mom[:] = 0.
-		for site in self.Atomslist:
-			self.latt_orbital_mom = self.latt_orbital_mom + site.L0
+
+#
+# QE subclass
+class QE_AtomicSiteList(AtomicSiteList):
+	def __init__(self):
+		super().__init__()
+	# set number of atoms
+	def set_natoms(self, cell_struct):
+		cell_struct.set_number_of_atoms()
+		self.natoms = cell_struct.get_number_of_atoms()
+		cell_struct.print_number_of_atoms()
+	def initialize_atoms_list(self, cell_struct):
+		self.set_natoms(cell_struct)
+		# symbols
+		symb_lst = cell_struct.get_chemical_symbols()
+		# make atoms list
+		for ia in range(self.natoms):
+			Element = symb_lst[ia]
