@@ -74,3 +74,17 @@ class QE_cell_class:
                     scaled_positions=self.coords, symbols=self.species)
 		phonon = Phonopy(unitcell=unit_cell, supercell_matrix=p.supercell_size)
 		self.cell = phonon.get_supercell()
+	def print_number_of_atoms(self):
+		log.info("number of atoms : " + str(self.nat))
+	def print_cell_charge(self):
+		log.info("cell charge : " + str(self.charge))
+	def print_num_electrons(self):
+		log.info("number of electrons : " + str(self.nelec))
+	def set_number_of_atoms(self):
+		self.nat = len(self.cell.get_chemical_symbols())
+	def get_number_of_atoms(self):
+		return self.nat
+	def set_cell_charge(self):
+		self.charge = p.charge
+	def set_electrons_number(self):
+		self.nelec = self.nuclear_charge - self.charge
