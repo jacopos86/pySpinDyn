@@ -1,7 +1,7 @@
 from pyspinorbitevol.read_input_data import p
 from pyspinorbitevol.atomic_struct_class import Psi4_AtomsStructureClass, QE_AtomsStructureClass
 from pyspinorbitevol.parser import parser
-from pyspinorbitevol.unit_cell_class import QE_UnitCell_class
+from pyspinorbitevol.cell_class import QE_cell_class
 import psi4
 
 #
@@ -48,7 +48,7 @@ class QE_SystemClass():
         self.atomic_struct = QE_AtomsStructureClass()
     # self cell structure
     def set_cell(self):
-        self.cell = QE_UnitCell_class()
+        self.cell = QE_cell_class()
         self.cell.set_primitive_vectors()
         # cell volume
     #  set k grid
@@ -58,9 +58,9 @@ class QE_SystemClass():
     def setup_atomic_structure(self):
         # first atomic structure
         self.init_atomic_structure()
-        self.atomic_struct.set_sites_list()
         # build cell structure
         self.set_cell()
+        self.atomic_struct.set_sites_list()
         # set k grid
 
 #

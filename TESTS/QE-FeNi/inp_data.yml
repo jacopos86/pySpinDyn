@@ -2,7 +2,7 @@ working_directory : /home/jacopo/Documents/orbital-evol-model-code/TESTS/QE-FeNi
 
 phonons : True
 nkpts : 1
-lattice_parameter_ang : 2.866
+lattice_parameter_ang : 3.581
 unit_cell : None
 active_space : 18
 active_els : 18
@@ -12,3 +12,38 @@ supercell_size :
   - 2
   - 2
   - 2
+primitive_vectors :
+  -
+    - 1.0
+    - 0.0
+    - 0.0
+  -
+    - 0.0
+    - 1.0
+    - 0.0
+  -
+    - 0.0
+    - 0.0
+    - 1.0
+unitcell_atoms :
+  -
+    - 0.492
+    - 0
+    - 0.006
+  -
+    - 0.989
+    - 0
+    - 0.48
+  -
+    - 0
+    - 0.5
+    - 0
+  -
+    - 0.518
+    - 0.5
+    - 0.507
+atom_symbols :
+  - Fe
+  - Fe
+  - Ni
+  - Ni
