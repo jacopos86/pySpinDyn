@@ -38,8 +38,8 @@ class QE_cell_class:
 		self.lattice = None
 		self.rec_lattice = None
 		self.primitive_vect = None
-		self.coords = None
-		self.species = None
+		self.scaled_coords = None
+		self.at_species = None
 	def set_volume(self):
 		# primitive vectors
 		a1 = self.primitive_vect[0,:]
@@ -55,29 +55,18 @@ class QE_cell_class:
 		self.lattice = Lattice(self.primitive_vect)
 	def set_rec_lattice(self):
 		self.rec_lattice = self.lattice.reciprocal_lattice
-	def set_atomic_coordinates(self, sites_list):
-		# set up the full atomic structure
-		Atomslist = sites_list.Atomslist
-		# atomic species
-		self.species = []
-		for Site in Atomslist:
-			elem = Site.element
-			self.species.append(elem)
-		# atom coordinates
-		self.coords = []
-		for Site in Atomslist:
-			R = Site.R0
-			self.coords.append(R)
 	def build_cell(self):
 		# set up the unit cell
 		unit_cell = PhonopyAtoms(cell=self.primitive_vect,
-                    scaled_positions=self.coords, symbols=self.species)
+                    scaled_positions=p.atoms_coords, symbols=p.atoms_symb)
 		phonon = Phonopy(unitcell=unit_cell, supercell_matrix=p.supercell_size)
 		self.cell = phonon.get_supercell()
 	def print_number_of_atoms(self):
 		log.info("number of atoms : " + str(self.nat))
 	def print_cell_charge(self):
 		log.info("cell charge : " + str(self.charge))
+	def print_nuclear_charge(self):
+		log.info("cell nuclear charge : " + str(self.nuclear_charge))
 	def print_num_electrons(self):
 		log.info("number of electrons : " + str(self.nelec))
 	def set_number_of_atoms(self):
@@ -88,3 +77,10 @@ class QE_cell_class:
 		self.charge = p.charge
 	def set_electrons_number(self):
 		self.nelec = self.nuclear_charge - self.charge
+	def set_nuclear_charge(self):
+		zv = 0.
+		symb_lst = self.cell.get_chemical_symbols()
+		for ia in range(self.nat):
+			pseudo_file = p.pseudo_dir + '/' + p.pseudo[symb_lst[ia]]
+			zv += p.read_Zv_from_pseudo_file(pseudo_file)
+		self.nuclear_charge = zv

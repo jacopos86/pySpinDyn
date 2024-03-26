@@ -9,11 +9,6 @@ class AtomsStructureClass(ABC):
     def __init__(self):
         self.sites_list = None
         self.cell_struct = None
-    # sites list
-    def set_sites_list(self):
-        # initialize atoms list
-        self.sites_list.initialize_atoms_list(self.cell_struct)
-        self.sites_list.print_geometry(self.cell_struct)
 
 #
 # psi4 atomic structure
@@ -31,7 +26,11 @@ class Psi4_AtomsStructureClass(AtomsStructureClass):
     # compute cell structure
     def compute_cell_structure(self):
         self.cell_struct.build_cell()
-    
+    # sites list
+    def set_sites_list(self):
+        # initialize atoms list
+        self.sites_list.initialize_atoms_list(self.cell_struct)
+        self.sites_list.print_geometry(self.cell_struct)
 #
 # QE atomic structure
 class QE_AtomsStructureClass(AtomsStructureClass):
@@ -44,5 +43,8 @@ class QE_AtomsStructureClass(AtomsStructureClass):
         self.cell_struct.set_primitive_vectors()
         self.cell_struct.set_volume()
         self.cell_struct.set_rec_lattice()
-        self.cell_struct.set_atomic_coordinates(self.sites_list)
         self.cell_struct.build_cell()
+    # sites list
+    def set_sites_list(self):
+        # initialize atoms list
+        self.sites_list.initialize_atoms_list(self.cell_struct)

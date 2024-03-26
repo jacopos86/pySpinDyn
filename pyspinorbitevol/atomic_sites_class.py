@@ -1,6 +1,7 @@
 import numpy as np
 from pyspinorbitevol.logging_module import log
 from pyspinorbitevol.phys_constants import bohr_to_ang, mp
+from pyspinorbitevol.read_input_data import p
 from abc import ABC
 #
 #   This module implements
@@ -119,7 +120,28 @@ class QE_AtomicSiteList(AtomicSiteList):
 	def initialize_atoms_list(self, cell_struct):
 		self.set_natoms(cell_struct)
 		# symbols
-		symb_lst = cell_struct.get_chemical_symbols()
+		symb_lst = cell_struct.cell.get_chemical_symbols()
+		# cryst. coordinates
+		cryst_coords = cell_struct.cell.get_scaled_positions()
 		# make atoms list
 		for ia in range(self.natoms):
 			Element = symb_lst[ia]
+			# atom mass
+			Mass = Formula(Element).mass
+			Mass = Mass * mp
+			# element Z
+			pseudo_file = p.pseudo_dir + '/' + p.pseudo[Element]
+			Z = p.read_Zv_from_pseudo_file(pseudo_file)
+			# atomic coordinates
+			R = cryst_coords[ia,:] * p.lattice_ang
+			V = np.zeros(3)
+			# add site to list
+			self.add_site_to_list(Element, Mass, Z, R, V)
+		# center of mass
+		self.set_total_mass()
+		self.set_center_of_mass_position()
+		self.set_center_of_mass_velocity()
+		self.set_lattice_orbital_momentum()
+		for ia in range(self.natoms):
+			self.Atomslist[ia].set_relative_position(self.Rcm)
+			self.Atomslist[ia].set_relative_velocity(self.Vcm)
