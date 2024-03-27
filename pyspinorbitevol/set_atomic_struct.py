@@ -46,11 +46,6 @@ class QE_SystemClass():
     # set up atoms system
     def init_atomic_structure(self):
         self.atomic_struct = QE_AtomsStructureClass()
-    # self cell structure
-    def set_cell(self):
-        self.cell = QE_cell_class()
-        self.cell.set_primitive_vectors()
-        # cell volume
     #  set k grid
     def set_kgrid(self):
         pass
@@ -59,7 +54,8 @@ class QE_SystemClass():
         # first atomic structure
         self.init_atomic_structure()
         # build cell structure
-        self.set_cell()
+        self.atomic_struct.compute_cell_structure()
+        # sites list
         self.atomic_struct.set_sites_list()
         # set k grid
 

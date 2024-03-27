@@ -1,4 +1,4 @@
-working_directory : /home/jacopo/Documents/orbital-evol-model-code/TESTS/QE-FeNi/
+working_directory : /home/jacopo/Documents/orbital-spindyn-code/TESTS/QE-FeNi/
 
 phonons : True
 nkpts : 1
@@ -47,3 +47,8 @@ atom_symbols :
   - Fe
   - Ni
   - Ni
+
+pseudo_dir : /home/jacopo/Documents/q-e-qe-6.5/pseudo
+pseudo :
+  Fe : Fe_ONCV_PBE_FR-1.0.upf
+  Ni : Ni_ONCV_PBE_FR-1.0.upf

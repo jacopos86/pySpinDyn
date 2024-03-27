@@ -44,6 +44,13 @@ class QE_AtomsStructureClass(AtomsStructureClass):
         self.cell_struct.set_volume()
         self.cell_struct.set_rec_lattice()
         self.cell_struct.build_cell()
+        self.cell_struct.set_number_of_atoms()
+        self.cell_struct.print_number_of_atoms()
+        self.cell_struct.set_cell_charge()
+        self.cell_struct.print_cell_charge()
+        self.cell_struct.set_nuclear_charge()
+        self.cell_struct.set_electrons_number()
+        self.cell_struct.print_num_electrons()
     # sites list
     def set_sites_list(self):
         # initialize atoms list

@@ -62,13 +62,13 @@ class QE_cell_class:
 		phonon = Phonopy(unitcell=unit_cell, supercell_matrix=p.supercell_size)
 		self.cell = phonon.get_supercell()
 	def print_number_of_atoms(self):
-		log.info("number of atoms : " + str(self.nat))
+		log.info("\t number of atoms : " + str(self.nat))
 	def print_cell_charge(self):
-		log.info("cell charge : " + str(self.charge))
+		log.info("\t cell charge : " + str(self.charge))
 	def print_nuclear_charge(self):
-		log.info("cell nuclear charge : " + str(self.nuclear_charge))
+		log.info("\t cell nuclear charge : " + str(self.nuclear_charge))
 	def print_num_electrons(self):
-		log.info("number of electrons : " + str(self.nelec))
+		log.info("\t number of electrons : " + str(self.nelec))
 	def set_number_of_atoms(self):
 		self.nat = len(self.cell.get_chemical_symbols())
 	def get_number_of_atoms(self):
@@ -77,10 +77,13 @@ class QE_cell_class:
 		self.charge = p.charge
 	def set_electrons_number(self):
 		self.nelec = self.nuclear_charge - self.charge
+	def get_number_of_electrons(self):
+		return self.nelec
 	def set_nuclear_charge(self):
 		zv = 0.
 		symb_lst = self.cell.get_chemical_symbols()
 		for ia in range(self.nat):
 			pseudo_file = p.pseudo_dir + '/' + p.pseudo[symb_lst[ia]]
 			zv += p.read_Zv_from_pseudo_file(pseudo_file)
+			print(zv)
 		self.nuclear_charge = zv
