@@ -3,6 +3,7 @@ from pyspinorbitevol.logging_module import log
 from pyspinorbitevol.phys_constants import bohr_to_ang, mp
 from pyspinorbitevol.read_input_data import p
 from abc import ABC
+from molmass import Formula
 #
 #   This module implements
 #   the atomic site class

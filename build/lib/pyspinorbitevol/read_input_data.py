@@ -194,13 +194,19 @@ class QE_input_data_class(input_data_class):
         lines = f.readlines()
         zv = 0.
         for line in lines:
-            line = line.strip().split()
-            if len(line) == 3:
-                if line[1] == "Z" and line[2] == "valence":
-                    zv = float(line[0])
-                    break
+            line = line.strip().split('=')
+            if line[0] == "z_valence":
+                r = line[1].strip()
+                r2 = ''
+                for c in r:
+                    if c == '"':
+                        pass
+                    else:
+                        r2 += c
+                zv = float(r2)
+                break
         return zv
-    
+
 # input parameters object
 arguments = parser.parse_args()
 code = arguments.calc_typ

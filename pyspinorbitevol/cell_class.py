@@ -85,5 +85,4 @@ class QE_cell_class:
 		for ia in range(self.nat):
 			pseudo_file = p.pseudo_dir + '/' + p.pseudo[symb_lst[ia]]
 			zv += p.read_Zv_from_pseudo_file(pseudo_file)
-			print(zv)
 		self.nuclear_charge = zv

@@ -77,11 +77,12 @@ class QE_cell_class:
 		self.charge = p.charge
 	def set_electrons_number(self):
 		self.nelec = self.nuclear_charge - self.charge
+	def get_number_of_electrons(self):
+		return self.nelec
 	def set_nuclear_charge(self):
 		zv = 0.
 		symb_lst = self.cell.get_chemical_symbols()
 		for ia in range(self.nat):
 			pseudo_file = p.pseudo_dir + '/' + p.pseudo[symb_lst[ia]]
 			zv += p.read_Zv_from_pseudo_file(pseudo_file)
-			print(zv)
 		self.nuclear_charge = zv
